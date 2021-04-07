@@ -181,6 +181,15 @@ fun schemaFor(serializersModule: SerializersModule,
          PrimitiveKind.FLOAT -> SchemaFor.FloatSchemaFor
          PrimitiveKind.BOOLEAN -> SchemaFor.BooleanSchemaFor
          SerialKind.ENUM -> EnumSchemaFor(descriptor)
+         SerialKind.CONTEXTUAL -> schemaFor(
+            serializersModule,
+            requireNotNull(serializersModule.getContextualDescriptor(descriptor)) {
+               "Contextual serializer not found for $descriptor "
+            },
+            annos,
+            namingStrategy,
+            resolvedSchemas
+         )
          PolymorphicKind.SEALED -> SealedClassSchemaFor(descriptor, namingStrategy, serializersModule, resolvedSchemas)
          StructureKind.CLASS, StructureKind.OBJECT -> when (descriptor.serialName) {
             "kotlin.Pair" -> PairSchemaFor(descriptor, namingStrategy, serializersModule, resolvedSchemas)
